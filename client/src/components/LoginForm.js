@@ -1,36 +1,14 @@
 // see SignupForm.js for comments
-// TODO: REST API
-// import React, { useState } from 'react';
-// TODO:
-import React, { useState, useEffect } from 'react';
-
+import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-// TODO: RET API
-// import { loginUser } from '../utils/API';
-// TODO:
-import { useMutation } from '@apollo/client';
-import { LOGIN_USER } from "../utils/mutations";
-
+import { loginUser } from '../utils/API';
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-
-  // TODO: setup mutation for login
-  const [login, {error}] = useMutation(LOGIN_USER);
-
-  // TODO: use effect for error
-  useEffect (() => {
-    if (error) {
-      setShowAlert(true)
-    }
-    else {
-      setShowAlert(false);
-    }
-  }, [error])
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -48,36 +26,22 @@ const LoginForm = () => {
     }
 
     try {
-      // TODO: REST API
-      // const response = await loginUser(userFormData);
-      // TODO:
-      const { data } = await login({
-        variables: { ...userFormData }
-      })
+      const response = await loginUser(userFormData);
 
-      // TODO: REST API
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
+      if (!response.ok) {
+        throw new Error('something went wrong!');
+      }
 
-      // TODO: REST API
-      // const { token, user } = await response.json();
-
-      // TODO: REST API
-      // console.log(user);
-      // Auth.login(token);
-
-      //TODO:
-      console.log("handleFormSubmit: data: ", data);
-      Auth.login(data.login.token);
-
+      const { token, user } = await response.json();
+      console.log(user);
+      Auth.login(token);
     } catch (err) {
       console.error(err);
-      // TODO: REST API. We use useEffect for error. See comment above
-      // setShowAlert(true);
+      setShowAlert(true);
     }
 
     setUserFormData({
+      username: '',
       email: '',
       password: '',
     });
